@@ -18,9 +18,6 @@ def prediction(X, W, b):
 def perceptronStep(X, y, W, b, learn_rate = 0.01):
     # Fill in code
     
-    # 'pred' is an int object.
-    pred = prediction(X, W, b)
-    
     ##############################################
     ## print out the input data structures
     #typ_x = type(X)
@@ -41,9 +38,16 @@ def perceptronStep(X, y, W, b, learn_rate = 0.01):
     #print(b)
     #print(len(y))
     #print(len(X))
+    
+    #print(X.T[0])      # column 1 in data.csv, x coordinates
+    #print(X.T[1])      # column 2 in data.csv, y coordinates
+    #print(np.random.rand(1)[0] + max(X.T[0]))
+    
     ##############################################
     
     for i in range(len(X)):
+        # 'pred' is an int object.
+        pred = prediction(X[i], W, b)
         if (pred == 0 and y[i] == 0) or (pred == 1 and y[i] == 1):
             pass
         elif pred == 0 and y[i] == 1:
@@ -54,7 +58,7 @@ def perceptronStep(X, y, W, b, learn_rate = 0.01):
             W[0] = W[0] - (learn_rate * X[i][0])
             W[1] = W[1] - (learn_rate * X[i][1])
             b = b - learn_rate
-    print (W,b)
+    #print (b)
     return W, b
     
 # This function runs the perceptron algorithm repeatedly on the dataset,
@@ -73,4 +77,5 @@ def trainPerceptronAlgorithm(X, y, learn_rate = 0.01, num_epochs = 50):
         # In each epoch, we apply the perceptron step.
         W, b = perceptronStep(X, y, W, b, learn_rate)
         boundary_lines.append((-W[0]/W[1], -b/W[1]))
+        #boundary_lines = [[-W[0]/W[1], -b/W[1]]]
     return boundary_lines
