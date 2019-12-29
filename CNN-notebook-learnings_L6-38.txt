@@ -1,0 +1,132 @@
+1.  1st model with 2 convolution layers that up samples the image depth; then max pooled, with 20% dropout. It has 3 fully connected layers to flatten and downsaple the image vectors. The FC layers did not use dropout. Trained for 20 epochs. Validation Loss stopped decreasing over time after 4 epochs although training loss was decreasing. So the model started overfitting quickly
+    epochs = 13, lr = 0.01, momentum = 0.9
+
+    Accuracy: 58%
+
+2.  2nd model is the same as the 1st one above but with dropout added to the FC layers as well. Other parameters are same. Similarly bad performance.
+
+    Accuracy: 56%
+
+ 3. 3rd model has only the FC layers using dropout. It performed a little better but the model started overfitting after only 7 epochs.
+
+    Accuracy: 63%
+
+ 4. 4th model: Same architecture as above but no dropout at all. The model actually did slighly better! Maybe I was underfitting the model by using dropout.
+
+    Accuracy: 65%
+
+5.  5th model: Still no dropout, but added an extra convolution layer to up sample the depth even more (2x every time) and added an extra FC layer to linearly downsample the flattened vector. 1% better accuracy but cats and dogs are still giving my model a hard time.
+
+    Accuracy: 66%
+
+6.  6th model: Let's slowly reintroduce dropout. Same architecture but dropouts added to all the convolution layers. Accuracy dropped a bit but the interesting thing is the validation loss kept decreasingly intermittently until the 10th epoch.
+
+    Accuracy: 61%
+
+7.  7th model: Added dropout to the FC layers as well. So, all layers have dropout now. Performance is worse but epoch 13 got the least validation loss after loss stopped decreasing from epoch 7 onward. Maybe it's time to increase learing rate and/or number of epochs. Before that, let remove dropout from the convolution layers.
+
+    Accuracy: 55%
+
+8.  8th model: No dropouts in the convolution layers. Identical accuracy as model 5 but now, cats and birds are difficult for my model. Lesson learned so far, let the convolution layers learn everything (no dropouts) if you are training for a small number of epochs.
+
+    Accuracy: 66%
+
+9.  9th model: Doubled the number of epochs to 26. Let's see how our best model, so far, performs when given more time to train.
+    It didn't really do any better but epoch 15 did the best. So, increasing training time might have helped a little.
+    epochs = 26
+
+    Accuracy: 66%
+
+10. 10th model: Same model, same number of epochs but now, I have reduced the learning rate 10 times. Aaaannd...it got better. So, our model was skipping local minima because of a faster learning rate. Loss decreased intermittently until the 21st epoch. Cats are still confusing, only 39% accuracy.
+    
+    lr = 0.001
+
+    Accuracy: 71%
+
+11. 11th model: A different convolution layer architecture with 5 convolution layers where the 1st 3 upsamples the depth without any maxpooling and the rest downsamples depth and uses maxpooling to reduce image dimension. I'll just copy-paste it below.
+
+    (conv1): Conv2d(3, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (conv2): Conv2d(16, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (conv3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (conv4): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (conv5): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+
+    The idea behind this design is to let the network learn everything it can about the images in the first 3 convolution layers and then slowly discard unimportant features as it downsamples the feature matrices. Basically, this is how I would have started to learn if I were given a set of images to classify without any prior knowledge of what they were.
+    The accuracy is still the same but 2 good things happened:
+         a. The loss decreased up until the last epoch, that is epoch 26.
+         b. We are now classifying cats with 51% accuracy. This is also the lowest class-wise accuracy among all 10 classes.
+
+    Although training time has increased from ~12 seconds to ~15 seconds, this is still promising. I'll double the number of epochs and see what happens next!
+
+    Accuracy: 70%
+
+12. 12th model: With 52 epochs, accuracy increased 1% with better cat prediciton at 54% but nothing too significant.
+
+    Accuracy: 71%
+
+13. 13th model: Now with dropout added to the 2 downsampling convolution layers. Idea is to let the network know that it had learned enough during upsampling. So, while downsampling, it should not only reduce depth and size, but also skip learning from random neurons to better generalize. Our model did better but with lesser cat and bird accuracy. I think we just need more cat, bird, deer and dog images for better performance.
+
+    Accuracy: 73%
+
+14. 14th model: Added a 6th downsampling convolution layer to get the depth back to the original depth of 3.
+    (conv6): Conv2d(16, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+
+    Model did worse...guess it lost too much information.
+
+    Accuracy: 65%
+
+15. 15th model: Went back to the 5-convolution-layer model (model #13) but increased the kernel size of the first layer to (5,5) with padding=2. The idea is to let the network see more of the image at a time by sliding across a larger filter while it learns features during upsampling. This was just an experiment to see if it performs worse or not. So I just used this kernel in the 1st layer. Same accuaracy with cat prediction at 50% but the rest of the class-wise accuracies look more balanced.
+
+    Accuracy: 73%
+
+16. 16th model (second last trial): Kernel size is (5,5) for all 3 upsampling layers to correctly implement the idea from model #15. Same accuracy but with minimum of 56% for cats. Validation loss has been continuously decreasing over time, which is good news. Looks like the model has started learning to be less biased by sacrificing accuracy of certain classes to keep everything balanced.
+
+    Accuracy: 73%
+
+17. Final trial: Let the model train for 100 epochs with the same parameters and architecure as in #16.
+
+    Best accuracy so far with 60% cat prediction and lowest validation loss at the 71st epoch!
+
+    Here are the final model parameters and accuracy levels:
+    Net(
+           (conv1): Conv2d(3, 16, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
+           (conv2): Conv2d(16, 32, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
+           (conv3): Conv2d(32, 64, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
+           (conv4): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+           (conv5): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+
+           (pool): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+
+           (fc1): Linear(in_features=1024, out_features=512, bias=True)
+           (fc2): Linear(in_features=512, out_features=256, bias=True)
+           (fc3): Linear(in_features=256, out_features=128, bias=True)
+           (fc4): Linear(in_features=128, out_features=10, bias=True)
+
+           (dropout): Dropout(p=0.2, inplace=False)
+           (softmax): LogSoftmax()
+    )
+
+    Test Loss: 0.725693
+
+    Test Accuracy of airplane:   82% (826/1000)
+    Test Accuracy of automobile: 86% (868/1000)
+    Test Accuracy of bird:       64% (649/1000)
+    Test Accuracy of cat:        60% (600/1000)
+    Test Accuracy of deer:       70% (705/1000)
+    Test Accuracy of dog:        69% (696/1000)
+    Test Accuracy of frog:       84% (840/1000)
+    Test Accuracy of horse:      77% (770/1000)
+    Test Accuracy of ship:       84% (842/1000)
+    Test Accuracy of truck:      84% (844/1000)
+
+Test Accuracy (Overall):         76% (7640/10000)
+
+
+Conclusion:
+
+It was fascinating to see how my ideas evolved as I continued experimenting with the CNN architecture. I think with more training data, especially more cats and birds, this simple model can do quite well. I did not try more complex architecure because you can just use exising ImageNet or ResNet architecture and do quite well with them. The objective was to hypothesize how a network might learn well using different configurations of kernel size, learning rate, layers, max pooling and prove if the hy[pthesis was correct or not.
+
+My takeaway from this experiment is how a combination of convolution layer configurations, dropout, learning rate and training time can affect class-wise prediction accuracy even if the total accuracy remains the same. The key takeway is to understand how to build a CNN architecture that can generalize well over all classes.
+
+The notebook is available at:
+https://github.com/dg1223/deep-learning-pytorch-udacity/blob/master/L6-38_cifar10_cnn_exercise.ipynb
