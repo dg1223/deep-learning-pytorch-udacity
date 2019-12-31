@@ -138,4 +138,4 @@ It was fascinating to see how my ideas evolved as I continued experimenting with
 My takeaway from this experiment is how a combination of convolution layer configurations, dropout, learning rate, training time and image augmentation can affect class-wise prediction accuracy even if the total accuracy remains the same. The key takeway is to understand how to build a CNN architecture that can generalize well over all classes.
 
 The notebook is available at:
-https://github.com/dg1223/deep-learning-pytorch-udacity/blob/master/L6-40_cifar10_cnn_exercise.ipynb
+https://github.com/dg1223/deep-learning-pytorch-udacity/blob/master/L6-40_cifar10_cnn_exercise_with_augmentation.ipynb
