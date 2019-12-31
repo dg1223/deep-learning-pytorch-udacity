@@ -86,6 +86,8 @@
 17. Final trial: Let the model train for 100 epochs with the same parameters and architecure as in #16.
 
     Best accuracy so far with 60% cat prediction and lowest validation loss at the 71st epoch!
+    
+    Accuracy: 76%
 
     Here are the final model parameters and accuracy levels:
     Net(
@@ -121,12 +123,19 @@
 
 Test Accuracy (Overall):         76% (7640/10000)
 
+Image Augmentation:
+This finishing trial randomly adds 15-degree rotations and horizontal flip to the input images and uses the same architecture for training and inference.
+
+And voila...we got even better accuracy, albeit slightly, although cat prediction decreased by 2%.
+
+Final accuracy: 77%
+
 
 Conclusion:
 
 It was fascinating to see how my ideas evolved as I continued experimenting with the CNN architecture. I think with more training data, especially more cats and birds, this simple model can do quite well. I did not try more complex architecure because you can just use exising ImageNet or ResNet architecture and do quite well with them. The objective was to hypothesize how a network might learn well using different configurations of kernel size, learning rate, layers, max pooling and prove if the hy[pthesis was correct or not.
 
-My takeaway from this experiment is how a combination of convolution layer configurations, dropout, learning rate and training time can affect class-wise prediction accuracy even if the total accuracy remains the same. The key takeway is to understand how to build a CNN architecture that can generalize well over all classes.
+My takeaway from this experiment is how a combination of convolution layer configurations, dropout, learning rate, training time and image augmentation can affect class-wise prediction accuracy even if the total accuracy remains the same. The key takeway is to understand how to build a CNN architecture that can generalize well over all classes.
 
 The notebook is available at:
-https://github.com/dg1223/deep-learning-pytorch-udacity/blob/master/L6-38_cifar10_cnn_exercise.ipynb
+https://github.com/dg1223/deep-learning-pytorch-udacity/blob/master/L6-40_cifar10_cnn_exercise.ipynb
